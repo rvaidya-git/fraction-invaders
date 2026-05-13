@@ -24,25 +24,24 @@ export default function App() {
   if (screen === 'start') {
     return (
       <div className="screen">
-        {/* Decorative alien parade */}
-        <div className="start-aliens" aria-hidden="true">
-          <span>👾</span><span>🛸</span><span>👽</span><span>🛸</span><span>👾</span>
-        </div>
-
         <h1 className="title">Fraction Invaders</h1>
-        <p className="tagline">Blast aliens &amp; solve fraction problems!</p>
+        <p className="tagline">Defend the galaxy by solving fraction problems.</p>
 
-        <p className="difficulty-heading">Choose a difficulty:</p>
-        <div className="difficulty-row">
-          <button className="btn btn-difficulty btn-easy" onClick={() => startGame('easy')}>
-            😊 Easy
-          </button>
-          <button className="btn btn-difficulty btn-medium" onClick={() => startGame('medium')}>
-            🤔 Medium
-          </button>
-          <button className="btn btn-difficulty btn-hard" onClick={() => startGame('hard')}>
-            🔥 Hard
-          </button>
+        <div className="player-cards">
+          <PlayerCard
+            name="Leela"
+            imageSrc="/images/leela.jpg"
+            fallbackEmoji="🌟"
+            colorClass="player-card-easy"
+            onClick={() => startGame('easy')}
+          />
+          <PlayerCard
+            name="Sonam"
+            imageSrc="/images/sonam.jpg"
+            fallbackEmoji="🔥"
+            colorClass="player-card-hard"
+            onClick={() => startGame('hard')}
+          />
         </div>
       </div>
     )
@@ -58,21 +57,43 @@ export default function App() {
         <p className="final-score">⭐ Score: {finalScore}</p>
         <p className="final-level">Level reached: {finalLevel}</p>
 
-        <p className="difficulty-heading">Play again — choose difficulty:</p>
-        <div className="difficulty-row">
-          <button className="btn btn-difficulty btn-easy" onClick={() => startGame('easy')}>
-            😊 Easy
-          </button>
-          <button className="btn btn-difficulty btn-medium" onClick={() => startGame('medium')}>
-            🤔 Medium
-          </button>
-          <button className="btn btn-difficulty btn-hard" onClick={() => startGame('hard')}>
-            🔥 Hard
-          </button>
+        <p className="difficulty-heading">Play again:</p>
+        <div className="player-cards">
+          <PlayerCard
+            name="Leela"
+            imageSrc="/images/leela.jpg"
+            fallbackEmoji="🌟"
+            colorClass="player-card-easy"
+            onClick={() => startGame('easy')}
+          />
+          <PlayerCard
+            name="Sonam"
+            imageSrc="/images/sonam.jpg"
+            fallbackEmoji="🔥"
+            colorClass="player-card-hard"
+            onClick={() => startGame('hard')}
+          />
         </div>
       </div>
     )
   }
 
   return <Game onGameOver={handleGameOver} difficulty={difficulty} />
+}
+
+// ─── PlayerCard ───────────────────────────────────────────────────────────────
+
+function PlayerCard({ name, imageSrc, fallbackEmoji, colorClass, onClick }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  return (
+    <button className={`player-card ${colorClass}`} onClick={onClick}>
+      <div className="player-card-avatar">
+        {!imgFailed
+          ? <img src={imageSrc} alt={name} onError={() => setImgFailed(true)} />
+          : <span className="player-card-emoji">{fallbackEmoji}</span>
+        }
+      </div>
+      <span className="player-card-name">{name}</span>
+    </button>
+  )
 }
