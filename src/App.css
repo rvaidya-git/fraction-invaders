@@ -711,4 +711,8 @@ kbd {
 
   .eq-op  { font-size: 22px; }
   .eq-blank { font-size: 28px; }
+
+  .answer-input {
+    max-width: 50%;
+  }
 }
