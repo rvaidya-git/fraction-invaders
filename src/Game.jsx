@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import MathChallenge from './MathChallenge'
+import EasyChallenge from './EasyChallenge'
 
 // ─── Arena dimensions ──────────────────────────────────────────────────────────
 const ARENA_W = 600
@@ -309,7 +310,11 @@ export default function Game({ onGameOver, difficulty = 'easy' }) {
       </div>
 
       {/* ── Math challenge modal — position:fixed, covers full viewport ── */}
-      {challenge && <MathChallenge onCorrect={handleChallengeCorrect} difficulty={difficulty} />}
+      {challenge && (
+        difficulty === 'easy'
+          ? <EasyChallenge onCorrect={handleChallengeCorrect} level={level} />
+          : <MathChallenge onCorrect={handleChallengeCorrect} difficulty={difficulty} />
+      )}
     </>
   )
 }
