@@ -426,9 +426,21 @@ kbd {
   flex-direction: column;
   align-items: center;
   gap: 22px;
-  /* Allow scrolling on short screens (landscape iPhone, small iPads) */
-  max-height: calc(100svh - 48px);
-  max-height: calc(100dvh - 48px);
+  /*
+    max-height must equal the overlay's inner height exactly so the box scrolls
+    internally and never overflows the overlay. The overlay's vertical padding is
+    max(24px, safe-top) + max(24px, safe-bottom), so we subtract those same values.
+    On iPhone with Dynamic Island (safe-top≈59px, safe-bottom≈34px) this is 93px,
+    not the 48px a hardcoded fallback would give — the difference caused the title
+    to be hidden above the scroll origin.
+  */
+  max-height: calc(100svh - 48px); /* fallback: no env() support */
+  max-height: calc(
+    100dvh
+    - max(24px, env(safe-area-inset-top))
+    - max(24px, env(safe-area-inset-bottom))
+  );
+  overflow-x: hidden; /* prevent implicit overflow-x:auto from overflow-y:auto */
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -452,7 +464,9 @@ kbd {
 .fraction-equation {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 18px;
+  width: 100%;
 }
 
 .frac {
@@ -670,6 +684,7 @@ kbd {
   font-family: ui-monospace, monospace;
   font-size: 16px;
   color: #e2e8f0;
+  overflow-wrap: break-word;
 }
 
 
