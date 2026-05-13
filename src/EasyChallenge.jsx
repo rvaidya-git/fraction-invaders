@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { generateAdditionProblem, checkEasyAnswer } from './addition'
 
-export default function EasyChallenge({ onCorrect, level }) {
+export default function EasyChallenge({ onCorrect, level, subtitle = 'Solve this to keep playing:' }) {
   const [problem] = useState(() => generateAdditionProblem(level))
   const [input, setInput]   = useState('')
   const [status, setStatus] = useState('idle') // idle | wrong | correct
@@ -22,7 +22,7 @@ export default function EasyChallenge({ onCorrect, level }) {
     <div className="challenge-overlay">
       <div className="challenge-box">
         <h2 className="challenge-title">Math Time! {emoji}</h2>
-        <p className="challenge-subtitle">Solve this to keep playing:</p>
+        <p className="challenge-subtitle">{subtitle}</p>
 
         <div className="easy-equation">
           <EmojiGroup count={a} emoji={emoji} />

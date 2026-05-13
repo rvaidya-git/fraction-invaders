@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { generateProblem, checkAnswer } from './fractions'
 
-export default function MathChallenge({ onCorrect, difficulty }) {
+export default function MathChallenge({ onCorrect, difficulty, subtitle = 'Solve this to continue playing:' }) {
   const [problem] = useState(() => generateProblem(difficulty))
   const [input, setInput]   = useState('')
   const [status, setStatus] = useState('idle') // idle | wrong | correct
@@ -32,8 +32,8 @@ export default function MathChallenge({ onCorrect, difficulty }) {
   return (
     <div className="challenge-overlay">
       <div className="challenge-box">
-        <h2 className="challenge-title">Fraction Challenge!</h2>
-        <p className="challenge-subtitle">Solve this to continue playing:</p>
+        <h2 className="challenge-title">Math Challenge!</h2>
+        <p className="challenge-subtitle">{subtitle}</p>
 
         {/* Equation */}
         <div className="fraction-equation">

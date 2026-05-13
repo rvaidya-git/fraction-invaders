@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 import Game from './Game'
+import EasyChallenge from './EasyChallenge'
+import MathChallenge from './MathChallenge'
 import './App.css'
 
 export default function App() {
@@ -8,8 +10,12 @@ export default function App() {
   const [finalScore, setFinalScore] = useState(0)
   const [finalLevel, setFinalLevel] = useState(1)
 
-  function startGame(diff) {
+  function selectPlayer(diff) {
     setDifficulty(diff)
+    setScreen('pregame')
+  }
+
+  function handlePregameCorrect() {
     setScreen('playing')
   }
 
@@ -24,8 +30,8 @@ export default function App() {
   if (screen === 'start') {
     return (
       <div className="screen">
-        <h1 className="title">Fraction Invaders</h1>
-        <p className="tagline">Defend the galaxy by solving fraction problems.</p>
+        <h1 className="title">Math Invaders</h1>
+        <p className="tagline">Defend the galaxy with your math skills.</p>
 
         <div className="player-cards">
           <PlayerCard
@@ -33,18 +39,32 @@ export default function App() {
             imageSrc="/images/leela.jpg"
             fallbackEmoji="🌟"
             colorClass="player-card-easy"
-            onClick={() => startGame('easy')}
+            onClick={() => selectPlayer('easy')}
           />
           <PlayerCard
             name="Sonam"
             imageSrc="/images/sonam.jpg"
             fallbackEmoji="🔥"
             colorClass="player-card-hard"
-            onClick={() => startGame('hard')}
+            onClick={() => selectPlayer('hard')}
           />
         </div>
       </div>
     )
+  }
+
+  if (screen === 'pregame') {
+    return difficulty === 'easy'
+      ? <EasyChallenge
+          onCorrect={handlePregameCorrect}
+          level={1}
+          subtitle="Solve this to start playing:"
+        />
+      : <MathChallenge
+          onCorrect={handlePregameCorrect}
+          difficulty={difficulty}
+          subtitle="Solve this to start playing:"
+        />
   }
 
   if (screen === 'gameover') {
@@ -64,14 +84,14 @@ export default function App() {
             imageSrc="/images/leela.jpg"
             fallbackEmoji="🌟"
             colorClass="player-card-easy"
-            onClick={() => startGame('easy')}
+            onClick={() => selectPlayer('easy')}
           />
           <PlayerCard
             name="Sonam"
             imageSrc="/images/sonam.jpg"
             fallbackEmoji="🔥"
             colorClass="player-card-hard"
-            onClick={() => startGame('hard')}
+            onClick={() => selectPlayer('hard')}
           />
         </div>
       </div>
