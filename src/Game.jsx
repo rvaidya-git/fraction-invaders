@@ -118,6 +118,7 @@ function update(s, dt, now) {
   const levelBonus    = (s.level - 1) * 15
   const marchBase     = Math.max(MARCH_MIN + 50, MARCH_BASE - levelBonus)
   const interval      = Math.max(MARCH_MIN, marchBase - killed * 20)
+                        * (s.difficulty === 'hard' ? 0.85 : 1)
 
   if (now - s.lastMarch >= interval && s.aliens.length > 0) {
     s.lastMarch = now
@@ -184,7 +185,7 @@ export default function Game({ onGameOver, difficulty = 'easy' }) {
 
   // Game loop — resets state on each mount so StrictMode double-invoke is safe
   useEffect(() => {
-    stateRef.current = makeState()
+    stateRef.current = { ...makeState(), difficulty }
     let animId
 
     function loop(now) {
@@ -208,7 +209,7 @@ export default function Game({ onGameOver, difficulty = 'easy' }) {
 
     animId = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(animId)
-  }, [onGameOver])
+  }, [onGameOver, difficulty])
 
   // Keyboard input — writes directly to ref, no re-renders triggered
   useEffect(() => {
