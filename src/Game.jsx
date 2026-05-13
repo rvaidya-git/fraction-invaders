@@ -118,7 +118,7 @@ function update(s, dt, now) {
   const levelBonus    = (s.level - 1) * 15
   const marchBase     = Math.max(MARCH_MIN + 50, MARCH_BASE - levelBonus)
   const interval      = Math.max(MARCH_MIN, marchBase - killed * 20)
-                        * (s.difficulty === 'hard' ? 0.85 : 1)
+                        * (s.difficulty === 'hard' ? 0.7225 : 1)
 
   if (now - s.lastMarch >= interval && s.aliens.length > 0) {
     s.lastMarch = now
