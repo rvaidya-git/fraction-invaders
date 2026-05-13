@@ -713,6 +713,6 @@ kbd {
   .eq-blank { font-size: 28px; }
 
   .answer-input {
-    max-width: 50%;
+    min-width: 0;
   }
 }
