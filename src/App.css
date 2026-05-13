@@ -9,7 +9,13 @@
   justify-content: center;
   gap: 28px;
   min-height: 100vh;
-  padding: 40px 24px;
+  min-height: 100dvh;
+  /* Top/bottom padding respects notch + home-bar safe areas */
+  padding:
+    max(40px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right))
+    max(40px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
 }
 
 /* Decorative alien parade above the title */
@@ -103,8 +109,27 @@ kbd {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 16px 20px;
+  justify-content: center;
+  gap: 12px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Keep content clear of Dynamic Island (top) and home bar (bottom) */
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  overflow: hidden;
+  /* Prevent text selection during rapid button tapping */
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+/* Scaled wrapper around HUD + arena only.
+   Touch controls live outside this so they stay at native tap size. */
+.game-canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 
@@ -192,6 +217,8 @@ kbd {
 
 .arena {
   position: relative;
+  /* Prevent Safari from triggering page scroll when the player touches the arena */
+  touch-action: none;
   /* Deep space: subtle blue nebula at top fading to near-black */
   background:
     radial-gradient(ellipse 70% 40% at 50% 10%, #0d1b4b 0%, transparent 70%),
@@ -299,7 +326,8 @@ kbd {
    ═══════════════════════════════════════════════════════════ */
 
 .touch-controls {
-  width: 600px;
+  /* Never wider than the arena, never wider than the viewport */
+  width: min(600px, calc(100vw - 16px));
   display: flex;
   gap: 10px;
   justify-content: space-between;
@@ -322,11 +350,14 @@ kbd {
   font-weight: 800;
   line-height: 1;
   padding: 12px 0;
+  /* At least 72px tall — comfortable thumb target on iPhone/iPad */
+  min-height: 72px;
   flex: 1;
-  /* Prevent text selection and callouts on long-press */
+  /* Prevent text selection, callouts, and tap highlight on iOS */
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .touch-btn:active {
@@ -375,7 +406,13 @@ kbd {
   z-index: 100;
   backdrop-filter: blur(4px);
   overflow-y: auto;
-  padding: 24px 16px;
+  overscroll-behavior: contain;
+  /* Respect notch and home-bar safe areas */
+  padding:
+    max(24px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
 }
 
 .challenge-box {
@@ -389,6 +426,11 @@ kbd {
   flex-direction: column;
   align-items: center;
   gap: 22px;
+  /* Allow scrolling on short screens (landscape iPhone, small iPads) */
+  max-height: calc(100svh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .challenge-title {

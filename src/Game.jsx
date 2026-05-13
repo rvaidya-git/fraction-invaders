@@ -241,9 +241,10 @@ export default function Game({ onGameOver, difficulty = 'easy' }) {
     if (s) { s.challenge = false; s.paused = false }
   }, [])
 
-  // Scale the game down to fit narrow screens (tablets and phones).
-  // zoom affects layout dimensions (unlike transform: scale), so no empty gap is left.
-  // The challenge overlay is position:fixed so it sits outside this zoom context.
+  // Scale the HUD+arena down to fit narrow screens (tablets and phones).
+  // CSS zoom changes layout dimensions, so the container naturally shrinks to the
+  // scaled size — no leftover whitespace. Touch controls live OUTSIDE the zoom so
+  // they stay at native size and remain comfortable on every screen.
   const [gameScale, setGameScale] = useState(() => Math.min(1, window.innerWidth / 636))
   useEffect(() => {
     const onResize = () => setGameScale(Math.min(1, window.innerWidth / 636))
@@ -255,56 +256,59 @@ export default function Game({ onGameOver, difficulty = 'easy' }) {
 
   return (
     <>
-      <div
-        className="game-root"
-        style={gameScale < 1 ? { zoom: gameScale } : undefined}
-      >
+      <div className="game-root">
 
-        {/* ── HUD ─────────────────────────────────────────────────── */}
-        <div className="hud">
-          <span className="hud-score">⭐ {score}</span>
-          <span className="hud-level">Lv {level}</span>
-          <span className="hud-lives">
-            {Array.from({ length: lives }, (_, i) => (
-              <span key={i} className="life-heart">♥</span>
+        {/* ── Scaled wrapper: HUD + arena only ────────────────────── */}
+        <div
+          className="game-canvas"
+          style={gameScale < 1 ? { zoom: gameScale } : undefined}
+        >
+          {/* HUD */}
+          <div className="hud">
+            <span className="hud-score">⭐ {score}</span>
+            <span className="hud-level">Lv {level}</span>
+            <span className="hud-lives">
+              {Array.from({ length: lives }, (_, i) => (
+                <span key={i} className="life-heart">♥</span>
+              ))}
+            </span>
+          </div>
+
+          {/* Arena */}
+          <div className="arena" style={{ width: ARENA_W, height: ARENA_H }}>
+
+            {aliens.map(alien => (
+              <div
+                key={alien.id}
+                className="alien"
+                data-row={alien.row}
+                style={{ left: alien.x, top: alien.y, width: ALIEN_W, height: ALIEN_H }}
+              >
+                {ALIEN_EMOJIS[alien.row]}
+              </div>
             ))}
-          </span>
-        </div>
 
-        {/* ── Arena ───────────────────────────────────────────────── */}
-        <div className="arena" style={{ width: ARENA_W, height: ARENA_H }}>
+            {bullets.map(b => (
+              <div
+                key={b.id}
+                className="bullet"
+                style={{ left: b.x, top: b.y, width: BULLET_W, height: BULLET_H }}
+              />
+            ))}
 
-          {aliens.map(alien => (
             <div
-              key={alien.id}
-              className="alien"
-              data-row={alien.row}
-              style={{ left: alien.x, top: alien.y, width: ALIEN_W, height: ALIEN_H }}
-            >
-              {ALIEN_EMOJIS[alien.row]}
-            </div>
-          ))}
-
-          {bullets.map(b => (
-            <div
-              key={b.id}
-              className="bullet"
-              style={{ left: b.x, top: b.y, width: BULLET_W, height: BULLET_H }}
+              className="ship"
+              style={{ left: shipX, top: SHIP_Y, width: SHIP_W, height: SHIP_H }}
             />
-          ))}
-
-          <div
-            className="ship"
-            style={{ left: shipX, top: SHIP_Y, width: SHIP_W, height: SHIP_H }}
-          />
+          </div>
         </div>
 
-        {/* ── On-screen touch controls ─────────────────────────────── */}
+        {/* ── Touch controls — native size, below the scaled arena ── */}
         <TouchControls pressKey={pressKey} releaseKey={releaseKey} />
 
       </div>
 
-      {/* ── Math challenge modal — outside zoom so it covers full viewport ── */}
+      {/* ── Math challenge modal — position:fixed, covers full viewport ── */}
       {challenge && <MathChallenge onCorrect={handleChallengeCorrect} difficulty={difficulty} />}
     </>
   )
