@@ -8,6 +8,11 @@ export default function MathChallenge({ onCorrect, difficulty, subtitle = 'Solve
 
   function handleSubmit(e) {
     e.preventDefault()
+    const normalized = input.trim().toLowerCase()
+    if (normalized === "i don't care" || normalized === 'julia is not real') {
+      setStatus('cheat')
+      return
+    }
     setStatus(checkAnswer(input, problem.answer) ? 'correct' : 'wrong')
   }
 
@@ -24,7 +29,7 @@ export default function MathChallenge({ onCorrect, difficulty, subtitle = 'Solve
         <h2 className="challenge-title">Math Challenge!</h2>
         <p className="challenge-subtitle">{subtitle}</p>
 
-        <EquationDisplay problem={problem} />
+        <EquationDisplay problem={problem} revealAnswer={status === 'cheat' ? formatFraction(problem.answer) : null} />
 
         {/* Fraction bars — hidden for multiplication (bars don't visualise ×) */}
         {type !== 'multiply' && (
@@ -56,6 +61,13 @@ export default function MathChallenge({ onCorrect, difficulty, subtitle = 'Solve
           </div>
         )}
 
+        {status === 'cheat' && (
+          <div className="feedback feedback-correct">
+            <p className="feedback-head">🤫 I can't believe Rohan gave you the cheat code!</p>
+            <button onClick={onCorrect} className="btn btn-continue">Continue Playing</button>
+          </div>
+        )}
+
         {status === 'correct' && (
           <div className="feedback feedback-correct">
             <p className="feedback-head">Correct! Well done!</p>
@@ -69,8 +81,9 @@ export default function MathChallenge({ onCorrect, difficulty, subtitle = 'Solve
 
 // ─── Equation display ─────────────────────────────────────────────────────────
 
-function EquationDisplay({ problem }) {
+function EquationDisplay({ problem, revealAnswer }) {
   const { type, a, b, denominatorA, denominatorB, op } = problem
+  const blank = <span className="eq-blank">{revealAnswer ?? '?'}</span>
 
   if (type === 'three') {
     return (
@@ -81,7 +94,7 @@ function EquationDisplay({ problem }) {
         <span className="eq-op">+</span>
         <Fraction n={problem.c} d={problem.denominatorC} />
         <span className="eq-op">=</span>
-        <span className="eq-blank">?</span>
+        {blank}
       </div>
     )
   }
@@ -92,7 +105,7 @@ function EquationDisplay({ problem }) {
       <span className="eq-op">{op}</span>
       <Fraction n={b} d={denominatorB} />
       <span className="eq-op">=</span>
-      <span className="eq-blank">?</span>
+      {blank}
     </div>
   )
 }

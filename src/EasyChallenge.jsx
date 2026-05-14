@@ -10,6 +10,11 @@ export default function EasyChallenge({ onCorrect, level, subtitle = 'Solve this
 
   function handleSubmit(e) {
     e.preventDefault()
+    const normalized = input.trim().toLowerCase()
+    if (normalized === "i don't care" || normalized === 'julia is not real') {
+      setStatus('cheat')
+      return
+    }
     setStatus(checkEasyAnswer(input, answer) ? 'correct' : 'wrong')
   }
 
@@ -29,7 +34,7 @@ export default function EasyChallenge({ onCorrect, level, subtitle = 'Solve this
           <span className="eq-op">+</span>
           <EmojiGroup count={b} emoji={emoji} />
           <span className="eq-op">=</span>
-          <span className="eq-blank">?</span>
+          <span className="eq-blank">{status === 'cheat' ? answer : '?'}</span>
         </div>
 
         {status === 'idle' && (
@@ -38,8 +43,6 @@ export default function EasyChallenge({ onCorrect, level, subtitle = 'Solve this
             <div className="answer-row">
               <input
                 type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 placeholder="Type a number"
@@ -61,6 +64,13 @@ export default function EasyChallenge({ onCorrect, level, subtitle = 'Solve this
               <span className="easy-answer-total">= {answer}</span>
             </div>
             <button onClick={handleTryAgain} className="btn btn-try">Try Again</button>
+          </div>
+        )}
+
+        {status === 'cheat' && (
+          <div className="feedback feedback-correct">
+            <p className="feedback-head">🤫 I can't believe Rohan gave you the cheat code!</p>
+            <button onClick={onCorrect} className="btn btn-continue">Continue Playing</button>
           </div>
         )}
 
